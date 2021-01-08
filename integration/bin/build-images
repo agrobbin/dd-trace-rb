@@ -1,0 +1,11 @@
+#!/bin/bash
+echo "== Building base images... =="
+docker build -t datadog/dd-apm-demo:wrk -f images/wrk/Dockerfile ./images/wrk
+docker build -t datadog/dd-apm-demo:rb-2.2 -f images/2.2/Dockerfile ./images
+docker build -t datadog/dd-apm-demo:rb-2.5 -f images/2.5/Dockerfile ./images
+docker build -t datadog/dd-apm-demo:rb-2.7 -f images/2.7/Dockerfile ./images
+echo "== Done building base images. =="
+
+echo "== Building application images... =="
+( cd apps/rack && ./bin/build-images )
+echo "== Done building application images. =="

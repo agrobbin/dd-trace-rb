@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "== Building Rack images... =="
+docker build --build-arg BASE_IMAGE=datadog/dd-apm-demo:rb-2.7 -t datadog/dd-apm-demo:rb-2.7-rack .
+echo "== Done building Rack images. =="

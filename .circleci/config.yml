@@ -147,6 +147,61 @@ orbs:
               key: bundle-{{ .Environment.CIRCLE_CACHE_VERSION }}-<<parameters.ruby_version>>-{{ checksum "lib/ddtrace/version.rb" }}-{{ .Branch }}-{{ checksum "Gemfile" }}-{{ checksum "Appraisals" }}-{{ checksum "ddtrace.gemspec" }}-{{ checksum ".circleci/bundle_checksum" }}'
               paths:
                 - /usr/local/bundle
+      # build_integration:
+      #   executor: docker-integration
+      #   parameters:
+      #     ruby_version:
+      #       description: Ruby version
+      #       type: string
+      #   steps:
+      #     - checkout
+      #     - setup_remote_docker:
+      #         docker_layer_caching: true
+      #     - run:
+      #         name: Build integration app Docker images
+      #         command: |
+      #           docker build -t datadog/dd-apm-demo:rb-<<parameters.ruby_version>>-rack-{{ .Environment.CIRCLE_SHA1 }} ./integration/apps/rack
+      #     - run:
+      #         name: Archive Docker image
+      #         command: docker save -o image.tar datadog/dd-apm-demo:rb-<<parameters.ruby_version>>-rack-{{ .Environment.CIRCLE_SHA1 }}
+      #     - persist_to_workspace:
+      #         root: .
+      #         paths:
+      #           - ./image.tar
+      # test_integration:
+        # executor: docker-integration
+        # parameters:
+        #   ruby_version:
+        #     description: Ruby version
+        #     type: string
+        # steps:
+        #   - attach_workspace:
+        #       at: /tmp/workspace
+        #   - setup_remote_docker:
+        #       docker_layer_caching: true
+        #   - run:
+        #       name: Load archived Docker image
+        #       command: docker load -i /tmp/workspace/image.tar
+        #   - run:
+        #       name: Inspect integration app image
+        #       command: |
+        #         docker image inspect datadog/dd-apm-demo:rb-<<parameters.ruby_version>>-rack-{{ .Environment.CIRCLE_SHA1 }}
+      test_integration:
+        executor: docker-integration
+        parameters:
+          ruby_version:
+            description: Ruby version
+            type: string
+        steps:
+          - checkout
+          - setup_remote_docker:
+              docker_layer_caching: true
+          - run:
+              command: cd ./integration && ./bin/build-images
+          - run:
+              command: cp ./integration/apps/rack/docker-compose.yml.sample ./integration/apps/rack/docker-compose.yml
+          - run:
+              command: cd ./integration/apps/rack && docker-compose up
       test:
         <<: *test_job_default
         docker:
@@ -252,6 +307,9 @@ orbs:
                 fi
     commands:
     executors:
+      docker-integration:
+        docker:
+          - image: circleci/buildpack-deps:stretch
 
 jobs:
   "deploy release":
@@ -391,6 +449,17 @@ workflows:
           filters:
             branches:
               only: /bump_to_version_.*/
+      # Integration
+      # - orb/build_integration:
+      #     name: build_integration-2.7
+      #     ruby_version: '2.7'
+      #     <<: *filters_all_branches_and_tags
+      - orb/test_integration:
+          name: test_integration-2.7
+          ruby_version: '2.7'
+          # requires:
+          #   - build_integration-2.7
+          <<: *filters_all_branches_and_tags
       # MRI
       - orb/build:
           <<: *config-2_0

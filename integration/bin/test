@@ -38,7 +38,7 @@ fi
 
 # Set configuration
 INTEGRATION_BASE_IMAGE=${INTEGRATION_BASE_IMAGE:-datadog/dd-apm-demo:rb-$INTEGRATION_RUBY_VERSION}
-INTEGRATION_APP_IMAGE=${INTEGRATION_APP_IMAGE:-datadog/dd-apm-demo:rb-$INTEGRATION_RUBY_VERSION-$INTEGRATION_APP}
+INTEGRATION_APP_IMAGE=${INTEGRATION_APP_IMAGE:-$INTEGRATION_BASE_IMAGE-$INTEGRATION_APP}
 INTEGRATION_COMPOSE_FILES="-f $INTEGRATION_DIR/apps/$INTEGRATION_APP/docker-compose.yml -f docker-compose.ci.yml"
 
 echo "== Running integration tests... =="
@@ -49,13 +49,10 @@ echo " - App image: $INTEGRATION_APP_IMAGE"
 echo ""
 
 # Pull/build any missing images
-# BASE_IMAGE=$INTEGRATION_BASE_IMAGE docker-compose $INTEGRATION_COMPOSE_FILES build
 APP_IMAGE=$INTEGRATION_APP_IMAGE docker-compose $INTEGRATION_COMPOSE_FILES build
 
 # Run the test suite
-# BASE_IMAGE=$INTEGRATION_BASE_IMAGE docker-compose $INTEGRATION_COMPOSE_FILES run tester /bin/bash
 APP_IMAGE=$INTEGRATION_APP_IMAGE docker-compose $INTEGRATION_COMPOSE_FILES run tester
 
 # Cleanup
-# BASE_IMAGE=$INTEGRATION_BASE_IMAGE docker-compose $INTEGRATION_COMPOSE_FILES down -t 0 --remove-orphans
 APP_IMAGE=$INTEGRATION_APP_IMAGE docker-compose $INTEGRATION_COMPOSE_FILES down -t 0 --remove-orphans

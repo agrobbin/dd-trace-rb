@@ -197,9 +197,11 @@ orbs:
           - setup_remote_docker:
               docker_layer_caching: true
           - run:
-              command: ./integration/bin/build-images -a
+              command: ./integration/bin/build-images
           - run:
-              command: ./integration/bin/ci
+              command: ./integration/apps/rack/bin/build-images
+          - run:
+              command: ./integration/apps/rack/bin/ci -v 2.7
       test:
         <<: *test_job_default
         docker:

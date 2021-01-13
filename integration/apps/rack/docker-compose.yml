@@ -47,9 +47,10 @@ services:
       - "8125/udp"
       - "8126"
     volumes:
-      - type: bind
-        source: ../../config/agent.yaml
-        target: /etc/datadog-agent/datadog.yaml
+      - ../../config/agent.yaml:/etc/datadog-agent/datadog.yaml
+      # - type: bind
+      #   source: ../../config/agent.yaml
+      #   target: /etc/datadog-agent/datadog.yaml
       # For monitoring performance of containers (e.g. CPU, Memory, etc...)
       # - type: bind
       #   source: /var/run/docker.sock
@@ -65,7 +66,7 @@ services:
       context: .
       args:
         BASE_IMAGE: datadog/dd-apm-demo:rb-2.7
-    command: ./bin/rspec
+    command: ls -al && ./bin/rspec
     depends_on:
       - app
     environment:

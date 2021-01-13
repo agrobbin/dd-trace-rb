@@ -7,7 +7,7 @@ cd $INTEGRATION_DIR
 
 # Set base image version
 INTEGRATION_VERSIONS=( "2.2" "2.5" "2.7" )
-INTEGRATION_APPS=( "rack")
+INTEGRATION_APPS=( "rack" )
 
 echo "== Starting CI test suite... =="
 echo " - Apps: $INTEGRATION_APPS"
@@ -19,7 +19,8 @@ do
     for version in "${INTEGRATION_VERSIONS[@]}"
     do
         :
-        ./bin/test -a $app -v $version
+        # ./bin/test -a $app -v $version
+        bash $INTEGRATION_DIR/apps/$app/bin/ci -v $version
     done
 done
 

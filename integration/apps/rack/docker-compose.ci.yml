@@ -1,0 +1,9 @@
+version: '3.2'
+services:
+  app:
+    image: ${APP_IMAGE}
+  tester:
+    image: ${APP_IMAGE}
+  ddagent:
+    environment:
+      - DD_API_KEY=invalid_api_key

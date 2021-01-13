@@ -197,11 +197,9 @@ orbs:
           - setup_remote_docker:
               docker_layer_caching: true
           - run:
-              command: cd ./integration && ./bin/build-images
+              command: ./integration/bin/build-images -a
           - run:
-              command: cp ./integration/apps/rack/docker-compose.yml.sample ./integration/apps/rack/docker-compose.yml
-          - run:
-              command: cd ./integration/apps/rack && docker-compose up
+              command: ./integration/bin/ci
       test:
         <<: *test_job_default
         docker:

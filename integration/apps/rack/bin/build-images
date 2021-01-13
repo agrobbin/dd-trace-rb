@@ -1,4 +1,12 @@
 #!/bin/bash
+set -euo pipefail
+
+APP_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+APP_DIR=${APP_BIN_DIR%/bin}
+cd $APP_DIR
+
 echo "== Building Rack images... =="
+docker build --build-arg BASE_IMAGE=datadog/dd-apm-demo:rb-2.2 -t datadog/dd-apm-demo:rb-2.2-rack .
+docker build --build-arg BASE_IMAGE=datadog/dd-apm-demo:rb-2.5 -t datadog/dd-apm-demo:rb-2.5-rack .
 docker build --build-arg BASE_IMAGE=datadog/dd-apm-demo:rb-2.7 -t datadog/dd-apm-demo:rb-2.7-rack .
 echo "== Done building Rack images. =="

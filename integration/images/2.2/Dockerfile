@@ -1,4 +1,4 @@
-FROM ruby:2.2.10
+FROM ruby:2.2
 
 # Add Jessie repos
 # Fixes https://superuser.com/questions/1423486/issue-with-fetching-http-deb-debian-org-debian-dists-jessie-updates-inrelease

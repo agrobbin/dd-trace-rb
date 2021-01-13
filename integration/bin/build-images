@@ -1,11 +1,29 @@
 #!/bin/bash
+set -euo pipefail
+
+INTEGRATION_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+INTEGRATION_DIR=${INTEGRATION_BIN_DIR%/bin}
+cd $INTEGRATION_DIR
+
+while getopts ":a" opt; do
+  case $opt in
+    a)
+      ALL_IMAGES=1
+      ;;
+    \? ) echo "Usage: build-images [-a]"
+      ;;
+  esac
+done
+
 echo "== Building base images... =="
-docker build -t datadog/dd-apm-demo:wrk -f images/wrk/Dockerfile ./images/wrk
-docker build -t datadog/dd-apm-demo:rb-2.2 -f images/2.2/Dockerfile ./images
-docker build -t datadog/dd-apm-demo:rb-2.5 -f images/2.5/Dockerfile ./images
-docker build -t datadog/dd-apm-demo:rb-2.7 -f images/2.7/Dockerfile ./images
+docker build -t datadog/dd-apm-demo:wrk -f $INTEGRATION_DIR/images/wrk/Dockerfile $INTEGRATION_DIR/images/wrk
+docker build -t datadog/dd-apm-demo:rb-2.2 -f $INTEGRATION_DIR/images/2.2/Dockerfile $INTEGRATION_DIR/images
+docker build -t datadog/dd-apm-demo:rb-2.5 -f $INTEGRATION_DIR/images/2.5/Dockerfile $INTEGRATION_DIR/images
+docker build -t datadog/dd-apm-demo:rb-2.7 -f $INTEGRATION_DIR/images/2.7/Dockerfile $INTEGRATION_DIR/images
 echo "== Done building base images. =="
 
-echo "== Building application images... =="
-( cd apps/rack && ./bin/build-images )
-echo "== Done building application images. =="
+if [ -v ALL_IMAGES ]; then
+  echo "== Building application images... =="
+  bash $INTEGRATION_DIR/apps/rack/bin/build-images
+  echo "== Done building application images. =="
+fi

@@ -1,7 +1,13 @@
 version: '3.2'
 services:
   app:
-    image: ${APP_IMAGE}
+    # Build at dd-trace-rb level to copy in current code
+    # and use it as the `ddtrace` gem.
+    build:
+      context: ../../..
+      dockerfile: integration/apps/rack/Dockerfile-ci
+      args:
+        BASE_IMAGE: ${APP_IMAGE}
     depends_on:
       - ddagent
     environment:
@@ -32,9 +38,15 @@ services:
     expose:
       - "8125/udp"
       - "8126"
+  # Build at dd-trace-rb level to copy in current code
+  # and use it as the `ddtrace` gem.
   tester:
-    image: ${APP_IMAGE}
-    command: ./bin/rspec
+    build:
+      context: ../../..
+      dockerfile: integration/apps/rack/Dockerfile-ci
+      args:
+        BASE_IMAGE: ${APP_IMAGE}
+    command: bin/rspec
     depends_on:
       - app
     environment:

@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+# Setup environment
+./bin/setup
+
 # Run health check
 bash /vendor/dd-demo/health-check
 

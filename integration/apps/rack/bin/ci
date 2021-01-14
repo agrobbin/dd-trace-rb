@@ -31,7 +31,7 @@ fi
 # Set configuration
 APP_BASE_IMAGE=${APP_BASE_IMAGE:-datadog/dd-apm-demo:rb-$APP_RUBY_VERSION}
 APP_IMAGE=${APP_IMAGE:-$APP_BASE_IMAGE-rack}
-APP_COMPOSE_FILES="-f docker-compose.yml -f docker-compose.ci.yml"
+APP_COMPOSE_FILES="-f docker-compose.ci.yml"
 
 echo "== Running integration tests... =="
 echo " - App: rack"

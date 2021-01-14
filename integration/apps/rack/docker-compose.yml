@@ -80,7 +80,6 @@ services:
     volumes:
       - .:/app
       - ./data/app:/data/app
-      # - bundle:/usr/local/bundle
       - ../../images/include:/vendor/dd-demo
       - ../../..:/vendor/dd-trace-rb
   loadtester:
@@ -95,5 +94,3 @@ services:
     volumes:
       - ./data/wrk:/data
       - ../../images/wrk/scripts:/scripts
-# volumes:
-#   bundle:

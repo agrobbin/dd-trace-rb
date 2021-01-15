@@ -5,26 +5,33 @@ INTEGRATION_BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 &&
 INTEGRATION_DIR=${INTEGRATION_BIN_DIR%/bin}
 cd $INTEGRATION_DIR
 
-while getopts ":a" opt; do
+# Parse options
+while getopts ":v:" opt; do
   case $opt in
-    a)
-      ALL_IMAGES=1
+    v)
+      APP_RUBY_VERSION=$OPTARG
       ;;
-    \? ) echo "Usage: build-images [-a]"
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
       ;;
   esac
 done
 
 echo "== Building base images... =="
-docker build -t datadog/dd-apm-demo:wrk -f $INTEGRATION_DIR/images/wrk/Dockerfile $INTEGRATION_DIR/images/wrk
+# "wrk" not necessary for CI: will be auto-built by local apps via docker-compose.
+# docker build -t datadog/dd-apm-demo:wrk -f $INTEGRATION_DIR/images/wrk/Dockerfile $INTEGRATION_DIR/images/wrk
 docker build -t datadog/dd-apm-demo:agent -f $INTEGRATION_DIR/images/agent/Dockerfile $INTEGRATION_DIR/images/agent
-docker build -t datadog/dd-apm-demo:rb-2.2 -f $INTEGRATION_DIR/images/2.2/Dockerfile $INTEGRATION_DIR/images
-docker build -t datadog/dd-apm-demo:rb-2.5 -f $INTEGRATION_DIR/images/2.5/Dockerfile $INTEGRATION_DIR/images
-docker build -t datadog/dd-apm-demo:rb-2.7 -f $INTEGRATION_DIR/images/2.7/Dockerfile $INTEGRATION_DIR/images
-echo "== Done building base images. =="
 
-if [ -v ALL_IMAGES ]; then
-  echo "== Building application images... =="
-  bash $INTEGRATION_DIR/apps/rack/bin/build-images
-  echo "== Done building application images. =="
+if [ -v APP_RUBY_VERSION ]; then
+  docker build -t datadog/dd-apm-demo:rb-$APP_RUBY_VERSION -f $INTEGRATION_DIR/images/$APP_RUBY_VERSION/Dockerfile $INTEGRATION_DIR/images
+else
+  docker build -t datadog/dd-apm-demo:rb-2.2 -f $INTEGRATION_DIR/images/2.2/Dockerfile $INTEGRATION_DIR/images
+  docker build -t datadog/dd-apm-demo:rb-2.5 -f $INTEGRATION_DIR/images/2.5/Dockerfile $INTEGRATION_DIR/images
+  docker build -t datadog/dd-apm-demo:rb-2.7 -f $INTEGRATION_DIR/images/2.7/Dockerfile $INTEGRATION_DIR/images
 fi
+echo "== Done building base images. =="

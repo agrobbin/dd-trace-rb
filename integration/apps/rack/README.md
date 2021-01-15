@@ -10,8 +10,7 @@ Install [direnv](https://github.com/direnv/direnv) for applying local settings.
 
 1. `cp .envrc.sample .envrc` and add your Datadog API key.
 2. `direnv allow` to load the env var.
-3. `cp docker-compose.yml.sample docker-compose.yml` and configure if necessary.
-4. `docker-compose run --rm api bin/setup`
+4. `docker-compose run --rm app bin/setup`
 
 ## Running the application
 
@@ -28,7 +27,7 @@ Run `docker-compose up` to auto-start the webserver. It should bind to `localhos
 Alternatively, you can run it manually with:
 
 ```sh
-docker-compose run --rm -p 80:80 api bin/dd-demo <process>
+docker-compose run --rm -p 80:80 app bin/dd-demo <process>
 ```
 
 The `<process>` argument is optional, and will default to `DD_DEMO_ENV_PROCESS` if not provided. See [Processes](#processes) for more details.
@@ -78,3 +77,18 @@ Docker configuration automatically creates and runs [Wrk](https://github.com/wg/
 You can modify the `loadtester_a` container in `docker-compose.yml` to change the load type or scenario run. Set the container's `command` to any set of arguments `wrk` accepts.
 
 You can also define your own custom scenario by creating a LUA file, mounting it into the container, and passing it as an argument via `command`.
+
+### Running tests
+
+You can run RSpec tests using the following and substituting for the Ruby major and minor version (e.g. `2.7`)
+
+```sh
+./bin/build-images -v <RUBY_VERSION>
+./bin/ci -v <RUBY_VERSION>
+```
+
+Or inside a running container:
+
+```sh
+./bin/rspec
+```

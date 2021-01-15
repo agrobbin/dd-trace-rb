@@ -4,14 +4,14 @@ Integration tests for `ddtrace` that use a variety of real applications.
 
 ## Quickstart
 
-1. Build Docker images:
+1. Build Docker base images:
 
     ```sh
     #!/bin/bash
     ./bin/build-images
     ```
 
-2. *TODO: Run integration test suite*
+2. Choose an application and follow instructions (in `README.md`.)
 
 ## Demo applications
 
@@ -31,17 +31,12 @@ See `README.md` in each directory for more information:
 The `images/` folders hosts some images for Ruby applications.
 
 - `datadog/dd-apm-demo:wrk` / `images/wrk/Dockerfile`: `wrk` load testing application (for generating load)
+- `datadog/dd-apm-demo:agent` / `images/agent/Dockerfile`: Datadog agent (with default configuration)
 - `datadog/dd-apm-demo:rb-2.2` / `images/2.2/Dockerfile`: MRI Ruby 2.2 & `Datadog::DemoEnv`
 - `datadog/dd-apm-demo:rb-2.5` / `images/2.5/Dockerfile`: MRI Ruby 2.5 & `Datadog::DemoEnv`
 - `datadog/dd-apm-demo:rb-2.7` / `images/2.7/Dockerfile`: MRI Ruby 2.7 & `Datadog::DemoEnv`
 
 Ruby base images include `Datadog::DemoEnv` and other helpers.
-
-### Configuration
-
-The `config/` folder contains configuration files used in demo applications.
-
- - `agent.yml`: Default agent configuration file.
 
 ### Debugging
 
